@@ -20,7 +20,6 @@ fetch("https://jsonplaceholder.typicode.com/comments/1s")
 .then((response)=>{
     console.log("status", response);
     try{
-
     if(response.ok && response.status===200){
         return response.json();
     }else{
@@ -114,3 +113,49 @@ fetch("https://jsonplaceholder.typicode.com/comments/1")
 .catch((error)=>{
     console.log("error inside", error);
 })
+
+// new Promise way to catch errors
+var promise = new Promise((resolve, reject)=>{
+    fetch("https://jsonplaceholder.typicode.com/cdomments/1")
+    .then((response)=>{
+        if(response.ok && response.status===200){
+            resolve(response.json())
+        }else{
+            reject({status: response.status, statusText: response.statusText, ok: response.ok})
+        }
+    })
+    .catch(error=>{
+        reject(error)
+    });
+}); 
+
+promise
+.then((data)=>{
+    console.log("data", data)
+})
+.catch((err)=>{
+console.log("error outside", err)
+});
+
+// // new Promise way to catch errors (another way)
+var promise = new Promise((resolve, reject)=>{
+    fetch("https://jsonplaceholder.typicode.com/cdomments/1")
+    .then((response)=>{
+        if(response.ok && response.status===200){
+            resolve(response.json())
+        }else{
+            reject({status: response.status, statusText: response.statusText, ok: response.ok})
+        }
+    })
+    .catch(error=>{
+        reject(error)
+    });
+}); 
+
+promise
+.then((data)=>{
+    console.log("data", data)
+},
+(error)=>{
+    console.log("error outside", error);
+});
