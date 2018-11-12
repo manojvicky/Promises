@@ -159,3 +159,48 @@ promise
 (error)=>{
     console.log("error outside", error);
 });
+
+//ASYNC and Await my own method
+function pro(){
+    return new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            console.log("Done");
+            return resolve("resolve Done");
+        }, 3000);
+    });
+}
+function handleResult(response){
+    console.log("response in handleResult", response);
+    return response.then((data)=>{console.log("result of data", data); return data;})
+}
+async function mypromise(url){
+    let response = await fetch(url);
+    console.log("response in mypromise", response);
+    return handleResult(response.json());
+}
+
+mypromise('https://jsonplaceholder.typicode.com/todos/1')
+.then((data)=>console.log("output data", data));
+
+// standard method ASYNC and await
+function myFunc(){
+    return new Promise((resolve, reject)=>{
+        setTimeout(()=>{console.log("Yoo resolve"); resolve(Promise.resolve("Yoo inside promise"))}, 3000)
+    });
+}
+async function handleResult(response){
+    console.log("response in handleResult", response);
+    if(response.ok){
+    const data = await response.json();
+    console.log("data in handleResult", data);
+    return data;
+    }
+}
+async function myfetch(url){
+    let response = await fetch(url);
+    console.log("yoo yoo after await", response);
+    return handleResult(response);
+}
+myfetch('https://jsonplaceholder.typicode.com/todos/1')
+.then((data)=>{console.log("data in OUTPUT", data)});
+
