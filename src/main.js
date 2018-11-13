@@ -9,9 +9,9 @@ function myFetch(url){
         document.getElementById("loader").style.display = "none";
         document.getElementById("mydata").style.display = "block";
         data.data.map((item, index)=>{
-            let node = document.createElement("LI");                 // Create a <li> node
-            let textnode = document.createTextNode(item);         // Create a text node
-            node.appendChild(textnode);                              // Append the text to <li>
+            let node = document.createElement("LI");                 
+            let textnode = document.createTextNode(item);         
+            node.appendChild(textnode);                            
             document.getElementById("mydata").appendChild(node);
         })
     })
@@ -21,7 +21,7 @@ function myFetch(url){
     });
 }
 function myFun(url){
-setTimeout(()=>{ myFetch(url)}, 5000)
+setTimeout(()=>{ myFetch(url)}, 1000)
 }
 
-myFun("./Jsons/stories.json");
+myFun("./src/Jsons/stories.json");
