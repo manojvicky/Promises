@@ -1,27 +1,65 @@
 
-function myFetch(url){
-    fetch(url).then((response)=>{
-    console.log("response", response);
+function get(url){
+    return fetch(url)
+}
+function getJson(url){
+return get(url);
+}
+getJson("./src/Jsons/stories.json")
+.then((response)=>{
+    if(response.ok && response.status === 200){
     return response.json();
-    })
-    .then((data)=>{
-        console.log("data", data);
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("mydata").style.display = "block";
-        data.data.map((item, index)=>{
-            let node = document.createElement("LI");                 
-            let textnode = document.createTextNode(item);         
-            node.appendChild(textnode);                            
-            document.getElementById("mydata").appendChild(node);
+    }else{
+        Promise.reject({
+                status: response.status,error: response.statusText
+            });
+    }
+})
+.then((data)=>{
+    console.log("data bilkul outside", data);
+    data.chapterUrls.map((chapterurl, index)=>{
+        getJson(`./src/Jsons/${chapterurl}`)
+        .then((response)=>{
+            if(response.ok && response.status === 200){
+            return response.json();
+            }else{
+                Promise.reject({
+                        status: response.status,error: response.statusText
+                    });
+            }
         })
-    })
-    .catch((err)=>{
-        console.log("err", err);
-        document.getElementById("loader").style.display = "none";
+        .then((data)=>{
+            console.log("data in each chapter", data);
+            let {title, details} = data.data;
+            console.log("yooy yoooy" , title, details)
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("mydata").style.display = "block";
+            let mainNode = document.createElement("div");
+            let spanNode = document.createElement("span");                 
+            let spanTextNode = document.createTextNode(title);         
+            let mainTextNode = document.createTextNode(details);         
+            mainNode.appendChild(mainTextNode); 
+            spanNode.appendChild(spanTextNode);
+            document.getElementById("mydata").appendChild(spanNode);
+            document.getElementById("mydata").appendChild(mainNode);
+        })
+        .catch((error)=>{
+            console.log("error in loading chapter data", error);
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("mydata").style.display = "block";
+            let mainNode = document.createElement("div");
+            let mainTextNode = document.createTextNode("error while reteriving data");         
+            mainNode.appendChild(mainTextNode); 
+            document.getElementById("mydata").appendChild(mainNode);
+        });
     });
-}
-function myFun(url){
-setTimeout(()=>{ myFetch(url)}, 1000)
-}
-
-myFun("./src/Jsons/stories.json");
+})
+.catch((error)=>{
+    console.log("error in loading chapter urls", error);
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("mydata").style.display = "block";
+    let mainNode = document.createElement("div");
+    let mainTextNode = document.createTextNode("error while reteriving data");         
+    mainNode.appendChild(mainTextNode); 
+    document.getElementById("mydata").appendChild(mainNode);
+});
