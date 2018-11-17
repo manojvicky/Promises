@@ -17,12 +17,14 @@ getJson("./src/Jsons/stories.json")
 })
 .then((data)=>{
     console.log("data in each chapter", data);
+    let errorsInside;
     document.getElementById("loader").style.display = "none";
     document.getElementById("mydata").style.display = "block";
-    Promise.all(data)
-    .then((lastdata)=>{
-        lastdata.map((chapterData)=>{
-        let {title, details} = chapterData.data;
+
+    data.map((chapterData)=>{
+        chapterData
+        .then((inComingdata)=>{
+            let {title, details} = inComingdata.data;
             // console.log("error in loading chapter urls", error);
             let mainNode = document.createElement("div");
             let spanNode = document.createElement("span");                 
@@ -35,18 +37,18 @@ getJson("./src/Jsons/stories.json")
             mainNodeDiv.appendChild(mainNode);
             document.getElementById("mydata").appendChild(mainNodeDiv);
         })
-    })
-    .catch((error)=>{
-        console.log("error inside", error);
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("mydata").style.display = "block";
-        let mainNode = document.createElement("div");
-        let mainTextNode = document.createTextNode("error while reteriving data");         
-        mainNode.appendChild(mainTextNode); 
-        document.getElementById("mydata").appendChild(mainNode);
-        return Promise.reject(error)
+        .catch((error)=>{
+            console.log("error inside", error);
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("mydata").style.display = "block";
+            let mainNode = document.createElement("div");
+            let mainTextNode = document.createTextNode("error while reteriving data");         
+            mainNode.appendChild(mainTextNode); 
+            document.getElementById("mydata").appendChild(mainNode);
+            return Promise.reject(error)
+        });
     });
-   
+    
 })
 .catch((error)=>{
     console.log("error in loading chapter urls", error);
