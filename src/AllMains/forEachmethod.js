@@ -12,17 +12,10 @@ return get(url).then((response)=>{
 }
 getJson("./src/Jsons/stories.json")
 .then((data)=>{
-    let sequence = Promise.resolve();
-    let sendData = [];
-    data.chapterUrls.forEach((chapterurl)=>{
-        sequence=sequence.then(()=>{
-            sendData.push(getJson(`./src/Jsons/${chapterurl}`));
-        });
+    console.log("data bilkul outside", data);
+    let sendData = data.chapterUrls.map((chapterurl)=>{
+        return getJson(`./src/Jsons/${chapterurl}`);
     });
-    console.log("data bilkul outside", sendData);
-    // let sendData = data.chapterUrls.map((chapterurl)=>{
-    //     return getJson(`./src/Jsons/${chapterurl}`);
-    // });
     return sendData;
 })
 .then((data)=>{
@@ -30,14 +23,13 @@ getJson("./src/Jsons/stories.json")
     let errorsInside;
     document.getElementById("loader").style.display = "none";
     document.getElementById("mydata").style.display = "block";
-    
+    let sequence = Promise.resolve();
     data.forEach((chapterData)=>{
         console.log("chapterData", chapterData);
-        
         chapterData
         .then((inComingdata)=>{
             let {title, details} = inComingdata.data;
-            console.log("error in loading chapter urls", inComingdata);
+            // console.log("error in loading chapter urls", error);
             let mainNode = document.createElement("div");
             let spanNode = document.createElement("span");                 
             let spanTextNode = document.createTextNode(title);         
