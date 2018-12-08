@@ -1,0 +1,9 @@
+{
+	"status":"success",
+	"data" :[
+	{"name" : "Hatchback","amount":"80,000"},
+	{"name" : "SUV","amount":"70,000"},
+	{"name" : "Sedan","amount":"50,000"},
+	{"name" : "Crossover","amount":"55,000"}
+	]
+}

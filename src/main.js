@@ -1,72 +1,133 @@
 
-function get(url){
-    return fetch(`${url}`)
-}
-function getJson(url){
-return get(url).then((response)=>{
-    return response.json();
-}).catch((error)=>{
-    console.log("Error in GetJson Function", error);
-    return Promise.reject(error);
+$(document).ready(function () {
+	$.ajax({
+		url: "./src/car.json",
+		type: "GET",
+		success: function (car) {
+			console.log(car);
+			for (var i = 0; i < car.data.length; i++) {
+				console.log(car.data[i].name);
+				$("#cars").append('<option>' + car.data[i].name + '</option>');
+			}
+		}
+	})
+	$.ajax({
+		url: "./src/fuel.json",
+		type: "GET",
+		success: function (fuel) {
+
+			console.log(fuel);
+			for (var i = 0; i < fuel.data.length; i++) {
+				console.log(fuel.data[i].name);
+				$("#fuel").append('<option>' + fuel.data[i].name + '</option>');
+			}
+		}
+	})
+
+	$.ajax({
+		url: "./src/state.json",
+		type: "GET",
+		success: function (state) {
+
+			console.log(state);
+			for (var i = 0; i < state.data.length; i++) {
+				console.log(state.data[i].name);
+				$("#state").append('<option>' + state.data[i].name + '</option>');
+			}
+		}
+	})
+
+
 });
+function showInsuranceForm() {
+
+	if ($('input#getInsurance[type="radio"]').is(':checked')) {
+		$('.formInsurance').removeClass('hidden');
+	}
+
 }
-getJson("./src/Jsons/stories.json")
-.then((data)=>{
-    let sequence = Promise.resolve();
-    let sendData = [];
-    data.chapterUrls.forEach((chapterurl)=>{
-        sequence=sequence.then(()=>{
-            sendData.push(getJson(`./src/Jsons/${chapterurl}`));
-        });
-    });
-    console.log("data bilkul outside", sendData);
-    // let sendData = data.chapterUrls.map((chapterurl)=>{
-    //     return getJson(`./src/Jsons/${chapterurl}`);
-    // });
-    return sendData;
-})
-.then((data)=>{
-    console.log("data in each chapter", data);
-    let errorsInside;
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("mydata").style.display = "block";
-    
-    data.forEach((chapterData)=>{
-        console.log("chapterData", chapterData);
-        
-        chapterData
-        .then((inComingdata)=>{
-            let {title, details} = inComingdata.data;
-            console.log("error in loading chapter urls", inComingdata);
-            let mainNode = document.createElement("div");
-            let spanNode = document.createElement("span");                 
-            let spanTextNode = document.createTextNode(title);         
-            let mainTextNode = document.createTextNode(details);
-            let mainNodeDiv = document.createElement("div");         
-            mainNode.appendChild(mainTextNode); 
-            spanNode.appendChild(spanTextNode);
-            mainNodeDiv.appendChild(spanNode);
-            mainNodeDiv.appendChild(mainNode);
-            document.getElementById("mydata").appendChild(mainNodeDiv);
-        })
-        .catch((error)=>{
-            console.log("error inside", error);
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("mydata").style.display = "block";
-            let mainNode = document.createElement("div");
-            let mainTextNode = document.createTextNode("error while reteriving data");         
-            mainNode.appendChild(mainTextNode); 
-            document.getElementById("mydata").appendChild(mainNode);
-            return Promise.reject(error)
-        });
-    })
-})
-.catch((error)=>{
-    console.log("error in loading chapter urls", error);
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("mydata").style.display = "block";
-    let mainNode = document.createElement("div");
-    let mainTextNode = document.createTextNode("error while reteriving data");         
-    mainNode.appendChild(mainTextNode); 
-    document.getElementById("mydata").appendChild(mainNode);
-});
+function getInsurance() {
+	var carVal = $('#cars').val();
+	var fuelVal = $('#fuel').val();
+	var stateVal = $('#state').val();
+	var cusName = $('#cusName').val();
+	var phVal = $('#cusNum').val();
+	var status = false;
+	if (carVal !== 'Select a car type') {
+		status = true;
+		$('.errorCars').addClass('hidden');
+	} else {
+		status = false;
+		$('.errorCars').removeClass('hidden');
+	}
+
+	if (fuelVal !== 'Select a fuel type') {
+		status = true;
+		$('.errorFuel').addClass('hidden');
+	} else {
+		status = false;
+		$('.errorFuel').removeClass('hidden');
+	}
+
+	if (stateVal !== 'Select a state') {
+		status = true;
+		$('.errorState').addClass('hidden');
+	} else {
+		status = false;
+		$('.errorState').removeClass('hidden');
+	}
+
+	if (cusName.length !== 0 && cusName.length > 2 && cusName.length <= 50) {
+		status = true;
+		$('.errorName').addClass('hidden');
+	} else {
+		status = false;
+		$('.errorName').removeClass('hidden');
+	}
+	if (phVal.length !== 0 && phVal.length == 10) {
+		status = true;
+		$('.errorNumber').addClass('hidden');
+	} else {
+		status = false;
+		$('.errorNumber').removeClass('hidden');
+	}
+	if (status) {
+		$('.formInsurance').addClass('hidden');
+		$('.benefits').addClass('hidden');
+		$('.buyInsurance').removeClass('hidden');
+
+		$.ajax({
+			url: "./src/insurance.json",
+			type: "GET",
+			success: function (insurance) {
+				//alert(insurance.data.length);
+				console.log(insurance);
+				for (var i = 0; i < insurance.data.length; i++) {
+					console.log(insurance.data[i]);
+					$("#insuranceA").append("<div id='list" + i + "' class='list' draggable='true' ondragstart='drag(event)'><p>" + insurance.data[i].name + "</p><p>" + insurance.data[i].amount + "</p></div>");
+				}
+			}
+		})
+
+	}
+
+}
+
+function allowDrop(ev) {
+	ev.preventDefault();
+}
+
+function drag(ev) {
+	ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+	ev.preventDefault();
+	var data = ev.dataTransfer.getData("text");
+
+	ev.target.append(document.getElementById(data));
+}
+function buyInsurance(e) {
+	console.log("buyInsurance", e)
+	alert("You Buy the insurance");
+}

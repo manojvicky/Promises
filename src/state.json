@@ -1,0 +1,10 @@
+{
+	"status":"success",
+	"data" :[
+	{"name" : "Asam"},
+	{"name" : "TamilNadu"},
+	{"name" : "Kerala"},
+	{"name" : "MP"},
+	{"name" : "AP"}
+	]
+}

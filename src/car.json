@@ -1,0 +1,9 @@
+{
+	"status":"success",
+	"data" :[
+	{"name" : "Hatchback"},
+	{"name" : "SUV"},
+	{"name" : "Sedan"},
+	{"name" : "Crossover"}
+	]
+}
